@@ -126,25 +126,97 @@ O sistema deverá integrar ViaCEP, Nominatim e OpenLayers, permitindo que a cons
 | Update | Editar imóveis cadastrados |
 | Delete | Excluir imóveis cadastrados |
 
-### 5. Integrações utilizadas
+## **5. Integrações utilizadas**
 
-**5.1. ViaCEP**
+### **5.1. ViaCEP**
 
-Responsável pela consulta de CEP e preenchimento automático dos dados de endereço.
+O **ViaCEP** é uma API gratuita utilizada para consultar informações de endereço a partir de um Código de Endereçamento Postal (CEP).
 
-Documentação: https://viacep.com.br/
+No sistema, será responsável por:
 
-**5.2. Nominatim — OpenStreetMap**
+- Consultar o endereço informado pelo usuário a partir do CEP.
+- Preencher automaticamente os campos de logradouro, bairro, cidade e estado.
+- Reduzir a necessidade de digitação manual.
+- Diminuir erros no cadastro dos endereços dos imóveis.
 
-Responsável por converter endereços em coordenadas geográficas, permitindo identificar a localização dos imóveis.
+**Exemplo de utilização:** ao informar o CEP de um imóvel, o sistema consulta o ViaCEP e preenche automaticamente os dados de endereço correspondentes.
 
-Documentação: https://nominatim.org/release-docs/latest/
+Documentação: [https://viacep.com.br/](https://viacep.com.br/?utm_source=chatgpt.com)
 
-**5.3. OpenLayers**
+### **5.2. Nominatim — OpenStreetMap**
 
-Biblioteca JavaScript responsável pela exibição de mapas interativos e marcadores de localização dos imóveis.
+O **Nominatim** é um serviço de geocodificação do OpenStreetMap que permite pesquisar localizações por meio de endereços e convertê-las em coordenadas geográficas.
 
-Documentação: https://openlayers.org/
+No sistema, será responsável por:
+
+- Receber o endereço do imóvel.
+- Pesquisar a localização geográfica correspondente.
+- Retornar as coordenadas de latitude e longitude.
+- Disponibilizar essas coordenadas para posicionar o imóvel no mapa.
+
+**Exemplo de utilização:** após o preenchimento do endereço pelo ViaCEP, o sistema envia os dados de localização ao Nominatim, que retorna as coordenadas geográficas do imóvel.
+
+Documentação: [https://nominatim.org/release-docs/latest/](https://nominatim.org/release-docs/latest/?utm_source=chatgpt.com)
+
+### **5.3. OpenLayers**
+
+O **OpenLayers** é uma biblioteca JavaScript de código aberto utilizada para incorporar mapas interativos em aplicações web.
+
+No sistema, será responsável por:
+
+- Exibir mapas interativos na interface.
+- Posicionar marcadores nos locais dos imóveis cadastrados.
+- Utilizar as coordenadas de latitude e longitude retornadas pelo Nominatim.
+- Permitir que o usuário visualize a localização geográfica dos imóveis.
+
+**Exemplo de utilização:** após obter as coordenadas do imóvel, o sistema utiliza o OpenLayers para exibir um marcador no mapa, indicando sua localização.
+
+Documentação: [https://openlayers.org/](https://openlayers.org/?utm_source=chatgpt.com)
+
+## **6. Fluxo de localização dos imóveis**
+
+O processo de localização será realizado pela integração entre as três tecnologias:
+
+1. **Informação do CEP:** o usuário informa o CEP do imóvel no formulário de cadastro.
+2. **Consulta ao ViaCEP:** o sistema consulta a API e recebe os dados do endereço.
+3. **Preenchimento automático:** os campos de logradouro, bairro, cidade e estado são preenchidos.
+4. **Geocodificação pelo Nominatim:** o sistema utiliza o endereço obtido para consultar as coordenadas geográficas.
+5. **Retorno das coordenadas:** o Nominatim retorna a latitude e a longitude correspondentes à localização encontrada.
+6. **Exibição pelo OpenLayers:** a biblioteca utiliza as coordenadas para posicionar um marcador no mapa.
+7. **Armazenamento:** as coordenadas são salvas no banco de dados junto às informações do imóvel, permitindo sua exibição posterior sem a necessidade de realizar uma nova consulta de geocodificação.
+
+**Representação do fluxo:**
+
+```
+Usuário informa o CEP
+        |
+        v
+     ViaCEP
+        |
+        v
+Preenchimento automático
+     do endereço
+        |
+        v
+    Nominatim
+        |
+        v
+Retorno da latitude
+   e longitude
+        |
+        v
+    OpenLayers
+        |
+        v
+Exibição do imóvel
+      no mapa
+        |
+        v
+Armazenamento no banco
+     de dados
+```
+
+**Observação técnica:** o ViaCEP e o Nominatim são serviços externos de consulta. Já o OpenLayers é uma biblioteca JavaScript utilizada na aplicação para exibir e manipular mapas. Caso o Nominatim não encontre o endereço, o sistema deverá informar o usuário e permitir que o cadastro do imóvel continue sem as coordenadas.
 
 ### 6. Fluxo de localização dos imóveis
 
