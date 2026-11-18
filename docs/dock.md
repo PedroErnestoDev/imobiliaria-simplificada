@@ -108,19 +108,11 @@ O sistema deverá integrar ViaCEP, Nominatim e OpenLayers, permitindo que a cons
 
 O sistema deverá permitir que usuários cadastrados realizem login por meio de e-mail e senha para acessar as funcionalidades administrativas.
 
-**RF22 — Autenticação em dois fatores (2FA)**
-
-Após a validação das credenciais, o sistema deverá solicitar uma segunda etapa de autenticação por meio de um código temporário gerado por aplicativo autenticador, seguindo o padrão TOTP.
-
-**RF23 — Configuração do segundo fator**
-
-O sistema deverá permitir configurar o segundo fator de autenticação, vinculando a conta do usuário a um aplicativo autenticador por meio de uma chave de configuração e um QR Code.
-
-**RF24 — Encerramento de sessão**
+**RF22 — Encerramento de sessão**
 
 O sistema deverá permitir que o usuário autenticado encerre sua sessão por meio da funcionalidade de logout.
 
-**RF25 — Controle de acesso às funcionalidades administrativas**
+**RF23 — Controle de acesso às funcionalidades administrativas**
 
 O sistema deverá restringir o acesso às funcionalidades administrativas a usuários autenticados e autorizados, impedindo o acesso direto por usuários sem as permissões necessárias.
 
@@ -139,8 +131,7 @@ O sistema deverá restringir o acesso às funcionalidades administrativas a usu�
 - **RN11:** Caso o Nominatim não encontre a localização, o sistema deverá informar que não foi possível identificar o endereço no mapa, sem impedir o cadastro do imóvel.
 - **RN12:** As coordenadas geográficas deverão ser obtidas automaticamente, sem preenchimento manual pelo usuário. Caso não sejam encontradas, poderão permanecer sem preenchimento.
 - **RN13:** Somente usuários autenticados e autorizados poderão acessar as funcionalidades administrativas.
-- **RN14:** O acesso administrativo somente deverá ser liberado após a validação da senha e do segundo fator de autenticação.
-- **RN15:** Os códigos TOTP deverão ser temporários e não poderão ser reutilizados após a validação.
+- **RN14:** O acesso administrativo somente deverá ser liberado após a validação da senha.
 
 ### 4. Operações principais do sistema
 
@@ -291,7 +282,6 @@ imobiliaria-simplificada/
 │   ├── editar-imovel.php
 │   ├── visualizar-imovel.php
 │   ├── login.php
-│   └── verificar-2fa.php
 │
 ├── api/
 │   ├── viacep.php
@@ -302,8 +292,6 @@ imobiliaria-simplificada/
 │   ├── editar-imovel.php
 │   ├── excluir-imovel.php
 │   ├── autenticar.php
-│   ├── configurar-2fa.php
-│   ├── verificar-2fa.php
 │   └── logout.php
 │
 ├── storage/

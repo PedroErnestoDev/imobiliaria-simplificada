@@ -82,15 +82,11 @@ Todos os diagramas estão na pasta `docks/`. As fontes editáveis estão em `.pu
 | Diagramas | Arquivo fonte | Visualização |
 |----------|--------------|--------------|
 | Banco de dados (ER) | `Diagrama banco de dados.drawio.svg` / `diagrama_banco_dados.puml` | `docks/` |
-| Casos de uso | `caso_de_uso.drawio.svg` / `diagrama_casos_uso.puml` | `docks/` |
-| Fluxo de autenticação | `Fluxo de autenticação.drawio.svg` | `docks/` |
-| Atividades — Visão geral | `Diagrama de atividades — Visão geral.drawio.svg` | `docks/` |
 | Sequência — Cadastro de imóvel | `diagrama_sequencia_cadastro_imovel.puml` | `.svg` |
 | Sequência — Consulta de imóveis | `diagrama_sequencia_consulta_imovel.puml` | `.svg` |
 | Sequência — Login | `diagrama_sequencia_login.puml` | `.svg` |
 | Componentes | `diagrama_componentes.puml` | `.svg` |
 | Implantação (Docker) | `diagrama_implantacao_docker.puml` | `.svg` |
-| Classes de domínio | `diagrama_classes_dominio.svg` | `.svg` |
 | Estado do imóvel | `diagrama_estado_imovel.svg` | `.svg` |
 
 ### Como editar os diagramas
