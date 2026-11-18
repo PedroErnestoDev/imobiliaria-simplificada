@@ -11,7 +11,7 @@ A **DW2 Imobiliária** conecta pessoas a oportunidades imobiliárias. O sistema 
 - Gerenciamento de imagens por imóvel
 - Consulta de endereço por CEP (ViaCEP) e geolocalização (Nominatim/OpenStreetMap)
 
-> ⚠️ O módulo de autenticação (login, cadastro de usuários, controle de acesso) está especificado em `docks/dock.md`, mas **ainda não está implementado** no código-fonte atual.
+> ⚠️ O módulo de autenticação (login, cadastro de usuários, controle de acesso) está especificado em `docs/dock.md`, mas **ainda não está implementado** no código-fonte atual.
 
 ## 🛠️ Stack tecnológica
 
@@ -43,7 +43,7 @@ docker compose up -d --build
 #   phpMyAdmin: http://localhost:8889 (root / root123456)
 ```
 
-O banco de dados é inicializado automaticamente pelo script `docks/init.sql` (tabelas e características iniciais).
+O banco de dados é inicializado automaticamente pelo script `db/init.sql` (tabelas e características iniciais).
 
 ### Credenciais padrão (banco)
 - Usuário: `root` / Senha: `root123456`
@@ -63,10 +63,11 @@ imobiliaria-simplificada/
 ├── public/
 │   ├── index.php         # Ponto de entrada da aplicação
 │   └── assets/           # Imagens, CSS e JS estáticos
-├── docks/                # Diagramas e documentação técnica
-│   ├── init.sql          # Script de inicialização do banco de dados
-│   ├── dock.md           # Requisitos funcionais e estrutura do projeto
-│   └── *.puml / *.svg    # Fontes e renderizações dos diagramas
+├── docs/                 # Diagramas e documentação técnica
+│   ├── dock.md           # Requisitos funcionais
+│   └── *.drawio.svg      # Diagramas do sistema
+├── db/
+│   └── init.sql          # Script de inicialização do banco de dados
 ├── docker-compose.yml    # Orquestração dos containers (web, db, phpmyadmin)
 ├── Dockerfile            # Imagem PHP 8.3 + Apache
 ├── .gitignore            # Arquivos ignorados pelo Git
@@ -77,21 +78,17 @@ imobiliaria-simplificada/
 
 ## 📐 Diagramas
 
-Todos os diagramas estão na pasta `docks/`. As fontes editáveis estão em `.puml` (PlantUML) e as renderizações em `.svg`.
+Os diagramas estão na pasta `docs/`.
 
 | Diagramas | Arquivo fonte | Visualização |
 |----------|--------------|--------------|
-| Banco de dados (ER) | `Diagrama banco de dados.drawio.svg` / `diagrama_banco_dados.puml` | `docks/` |
-| Sequência — Cadastro de imóvel | `diagrama_sequencia_cadastro_imovel.puml` | `.svg` |
-| Sequência — Consulta de imóveis | `diagrama_sequencia_consulta_imovel.puml` | `.svg` |
-| Sequência — Login | `diagrama_sequencia_login.puml` | `.svg` |
-| Componentes | `diagrama_componentes.puml` | `.svg` |
-| Implantação (Docker) | `diagrama_implantacao_docker.puml` | `.svg` |
-| Estado do imóvel | `diagrama_estado_imovel.svg` | `.svg` |
-
-### Como editar os diagramas
-- Abra os arquivos `.puml` no [PlantUML Online Server](https://www.plantuml.com/plantuml/) ou em qualquer editor com suporte a PlantUML (VS Code, IntelliJ, etc.).
-- Os arquivos `.svg` existentes são do [draw.io](https://app.diagrams.net/) e podem ser editados arrastando o arquivo para o editor.
+| Banco de dados (ER) | [`Diagrama Entidade-Relacionamento — Sistema Imobiliário.drawio.svg`](docs/Diagrama%20Entidade-Relacionamento%20—%20Sistema%20Imobiliário.drawio.svg) |
+| Casos de uso | [`Diagrama de Casos de Uso — DW2 Imobiliária.drawio.svg`](docs/Diagrama%20de%20Casos%20de%20Uso%20—%20DW2%20Imobiliária.drawio.svg) |
+| Sequência — Cadastro de imóvel | [`Diagrama de Sequência — Cadastro de Imóvel.drawio.svg`](docs/Diagrama%20de%20Sequência%20—%20Cadastro%20de%20Imóvel.drawio.svg) |
+| Sequência — Consulta de imóveis | [`Diagrama de Sequência — Consulta de Imóveis.drawio.svg`](docs/Diagrama%20de%20Sequência%20—%20Consulta%20de%20Imóveis.drawio.svg) |
+| Sequência — Login | [`Sequência — Login de Usuário.drawio.svg`](docs/Sequência%20—%20Login%20de%20Usuário.drawio.svg) |
+| Componentes | [`diagrama_componentes.svg`](docs/diagrama_componentes.svg) |
+| Estado do imóvel | [`diagrama_estado_imovel.svg`](docs/diagrama_estado_imovel.svg) |
 
 ## 📚 Documentação completa
 
@@ -101,15 +98,9 @@ Toda a documentação do projeto está na pasta `docs/`:
 |-----------|-----------|
 | [`GUIA_USUARIO.md`](docs/GUIA_USUARIO.md) | Guia para uso do sistema (consulta, filtros, cadastro de imóveis) |
 | [`GUIA_DESENVOLVEDOR.md`](docs/GUIA_DESENVOLVEDOR.md) | Arquitetura, stack, estrutura, banco de dados e como contribuir |
-| [`INSTALACAO.md`](docs/INSTALACAO.md) | Instalação, implantação e configuração em desenvolvimento/produção |
-| [`SEGURANCA.md`](docs/SEGURANCA.md) | Práticas e recomendações de segurança |
-| [`CHANGELOG.md`](docs/CHANGELOG.md) | Histórico de mudanças por versão |
-
-## 📖 Documentação relacionada (docks/)
-
-- [`docks/dock.md`](docks/dock.md) — Requisitos funcionais (RF01–RF17+) e estrutura do projeto
-- [`docks/dicionario_dados.md`](docks/dicionario_dados.md) — Dicionário de dados do banco de dados
-- [`docks/api_endpoints.md`](docks/api_endpoints.md) — Integrações externas (ViaCEP, Nominatim)
+| [`dock.md`](docs/dock.md) | Requisitos funcionais e estrutura do projeto |
+| [`dicionario_dados.md`](docs/dicionario_dados.md) | Dicionário de dados do banco de dados |
+| [`api_endpoints.md`](docs/api_endpoints.md) | Integrações externas (ViaCEP, Nominatim) |
 
 ## 🧑‍💻 Contribuição
 

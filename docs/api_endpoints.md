@@ -89,5 +89,5 @@ Utilizada para converter endereços em coordenadas (latitude/longitude) e exibir
 
 ## Diagramas relacionados
 
-- [`diagrama_sequencia_consulta_imovel.puml`](./diagrama_sequencia_consulta_imovel.puml) — fluxo de consulta com ViaCEP e Nominatim
+- [`Diagrama de Sequência — Consulta de Imóveis.drawio.svg`](./Diagrama%20de%20Sequência%20—%20Consulta%20de%20Imóveis.drawio.svg) — fluxo de consulta com ViaCEP e Nominatim
 - [`dock.md`](./dock.md) — requisitos funcionais RF17 e mapa interativo

@@ -268,7 +268,7 @@ imobiliaria-simplificada/
 ├── db/
 │   └── init.sql
 │
-├── docks/
+├── docs/
 │   └── Diagrama banco de dados.drawio.svg
 │
 ├── includes/
@@ -320,7 +320,7 @@ Armazena os arquivos de configuração do sistema, incluindo a conexão com o ba
 
 Contém os arquivos SQL responsáveis pela criação e inicialização do banco de dados.
 
-**docks/**
+**docs/**
 
 Armazena diagramas e documentos visuais utilizados na modelagem e documentação do projeto.
 

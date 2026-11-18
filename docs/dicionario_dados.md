@@ -1,6 +1,6 @@
 # Dicionário de Dados — Banco `imobiliaria`
 
-Documentação das tabelas e colunas criadas pelo script `docks/init.sql`.
+Documentação das tabelas e colunas criadas pelo script `db/init.sql`.
 
 ---
 
@@ -115,6 +115,5 @@ Tabela de junção entre imóveis e características (relacionamento N para N).
 
 ## Diagramas relacionados
 
-- [`Diagrama banco de dados.drawio.svg`](./Diagrama%20banco%20de%20dados.drawio.svg) — modelo entidade-relacionamento visual
-- [`diagrama_classes_dominio.puml`](./diagrama_classes_dominio.puml) — classes de domínio
+- [`Diagrama Entidade-Relacionamento — Sistema Imobiliário.drawio.svg`](./Diagrama%20Entidade-Relacionamento%20—%20Sistema%20Imobiliário.drawio.svg) — modelo entidade-relacionamento visual
 - [`dock.md`](./dock.md) — requisitos funcionais (RF01–RF17+)

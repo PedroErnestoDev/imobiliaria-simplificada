@@ -2,7 +2,7 @@
 
 Sistema de gerenciamento imobiliário para cadastro, consulta, edição e exclusão de imóveis disponíveis para venda e aluguel.
 
-> Este guia descreve como utilizar o sistema a partir das funcionalidades planejadas e já implementadas. Algumas telas (cadastro, login, gerenciamento de usuários) estão previstas nos requisitos funcionais (`docks/dock.md`) e ainda em fase de implementação no código-fonte.
+> Este guia descreve como utilizar o sistema a partir das funcionalidades planejadas e já implementadas. Algumas telas (cadastro, login, gerenciamento de usuários) estão previstas nos requisitos funcionais (`dock.md`) e ainda em fase de implementação no código-fonte.
 
 ---
 
@@ -79,7 +79,7 @@ Ao clicar em um imóvel, a página de detalhes exibe:
 
 O acesso restrito permite gerenciar os imóveis.
 
-> **Aviso:** o módulo de autenticação (login, cadastro de usuários, controle de acesso) está **planejado** nos requisitos funcionais (`docks/dock.md`), mas **ainda não está implementado** no código-fonte atual. As telas de cadastro, edição e exclusão de imóveis também estão em fase de implementação.
+> **Aviso:** o módulo de autenticação (login, cadastro de usuários, controle de acesso) está **planejado** nos requisitos funcionais (`dock.md`), mas **ainda não está implementado** no código-fonte atual. As telas de cadastro, edição e exclusão de imóveis também estão em fase de implementação.
 
 ### 3.1 Cadastro de imóveis (RF01, RF02, RF03, RF15, RF16)
 
@@ -134,7 +134,7 @@ Defina cada imóvel como:
 | **ViaCEP** | Preenchimento automático de endereço ao informar o CEP |
 | **Nominatim / OpenStreetMap** | Conversão de endereço em coordenadas para o mapa interativo |
 
-Mais detalhes em `docks/api_endpoints.md`.
+Mais detalhes em [`api_endpoints.md`](api_endpoints.md).
 
 ---
 

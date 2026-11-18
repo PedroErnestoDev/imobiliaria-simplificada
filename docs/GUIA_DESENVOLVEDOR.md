@@ -30,26 +30,27 @@ imobiliaria-simplificada/
 ├── public/
 │   ├── index.php         # Ponto de entrada da aplicação (landing page)
 │   └── assets/           # Imagens, CSS e JS estáticos
-├── docks/                # Diagramas e documentação técnica
-│   ├── init.sql          # Script de inicialização do banco de dados
+├── docs/                 # Diagramas e documentação técnica
 │   ├── dock.md           # Requisitos funcionais e estrutura do projeto
 │   ├── dicionario_dados.md
 │   ├── api_endpoints.md
-│   └── *.puml / *.svg    # Fontes e renderizações dos diagramas
+│   └── *.svg             # Renderizações dos diagramas
+├── db/
+│   └── init.sql          # Script de inicialização do banco de dados
 ├── docker-compose.yml    # Orquestração dos containers (web, db, phpmyadmin)
 ├── Dockerfile            # Imagem PHP 8.3 + Apache
 ├── .gitignore            # Arquivos ignorados pelo Git
 └── README.md             # Documentação principal
 ```
 
-### 1.3 Estrutura planejada (docks/dock.md)
+### 1.3 Estrutura planejada (docs/dock.md)
 
-O documento `docks/dock.md` descreve uma estrutura ideal futura, ainda não refletida no código:
+O documento `docs/dock.md` descreve uma estrutura ideal futura, ainda não refletida no código:
 
 ```
 config/           # Configuração (database.php)
 db/               # Scripts SQL (init.sql)
-docks/            # Diagramas e documentos visuais
+docs/             # Diagramas e documentos visuais
 includes/         # Componentes reutilizáveis (header, footer)
 pages/            # Páginas de apresentação
 api/              # Integrações externas (viacep.php, geocoding.php)
@@ -106,7 +107,7 @@ Página de destino (landing page) estática com:
 
 ## 3. Banco de dados
 
-O esquema é criado pelo script `docks/init.sql`. Tabelas:
+O esquema é criado pelo script `db/init.sql`. Tabelas:
 
 | Tabela | Finalidade |
 |--------|------------|
@@ -136,7 +137,7 @@ O script também insere 5 características iniciais (3 internas, 2 externas).
 | ViaCEP | `https://viacep.com.br/ws/` | Preenchimento automático de endereço por CEP |
 | Nominatim / OpenStreetMap | `https://nominatim.openstreetmap.org/` | Geocodificação (endereço → coordenadas) |
 
-Detalhes em `docks/api_endpoints.md`.
+Detalhes em [`api_endpoints.md`](api_endpoints.md).
 
 ---
 
@@ -155,7 +156,7 @@ docker compose up -d --build
 #   phpMyAdmin: http://localhost:8889
 ```
 
-O banco de dados é inicializado automaticamente pelo script `docks/init.sql`.
+O banco de dados é inicializado automaticamente pelo script `db/init.sql`.
 
 ### 5.1 Parar e remover containers
 
@@ -183,28 +184,23 @@ docker compose up -d --build --no-cache
 
 ## 7. Diagramas
 
-Todos os diagramas estão na pasta `docks/`. As fontes editáveis estão em `.puml` (PlantUML) e as renderizações em `.svg`.
+Os diagramas estão na pasta `docs/` e estão em formato `.svg`/Draw.io.
 
 | Diagrama | Arquivo fonte | Visualização |
 |----------|--------------|--------------|
-| Banco de dados (ER) | `Diagrama banco de dados.drawio.svg` | `docks/` |
-| Sequência — Cadastro de imóvel | `diagrama_sequencia_cadastro_imovel.puml` | `.svg` |
-| Sequência — Login | — | [`Sequência — Login de Usuário.drawio.svg`](Sequência%20%E2%80%94%20Login%20de%20Usu%C3%A1rio.drawio.svg) |
-| Sequência — Consulta de imóveis | `diagrama_sequencia_consulta_imovel.puml` | `.svg` |
-| Componentes | `diagrama_componentes.puml` | `.svg` |
-| Implantação (Docker) | `diagrama_implantacao_docker.puml` | `.svg` |
-| Estado do imóvel | `diagrama_estado_imovel.svg` | `.svg` |
-
-### 7.1 Como editar
-
-- Arquivos `.puml`: abra no [PlantUML Online Server](https://www.plantuml.com/plantuml/) ou editor com suporte a PlantUML (VS Code, IntelliJ).
-- Arquivos `.svg` do draw.io: arraste o arquivo para o [draw.io](https://app.diagrams.net/).
+| Banco de dados (ER) | [`Diagrama Entidade-Relacionamento — Sistema Imobiliário.drawio.svg`](Diagrama%20Entidade-Relacionamento%20—%20Sistema%20Imobiliário.drawio.svg) |
+| Casos de uso | [`Diagrama de Casos de Uso — DW2 Imobiliária.drawio.svg`](Diagrama%20de%20Casos%20de%20Uso%20—%20DW2%20Imobiliária.drawio.svg) |
+| Sequência — Cadastro de imóvel | [`Diagrama de Sequência — Cadastro de Imóvel.drawio.svg`](Diagrama%20de%20Sequência%20—%20Cadastro%20de%20Imóvel.drawio.svg) |
+| Sequência — Login | [`Sequência — Login de Usuário.drawio.svg`](Sequência%20—%20Login%20de%20Usuário.drawio.svg) |
+| Sequência — Consulta de imóveis | [`Diagrama de Sequência — Consulta de Imóveis.drawio.svg`](Diagrama%20de%20Sequência%20—%20Consulta%20de%20Imóveis.drawio.svg) |
+| Componentes | [`diagrama_componentes.svg`](diagrama_componentes.svg) |
+| Estado do imóvel | [`diagrama_estado_imovel.svg`](diagrama_estado_imovel.svg) |
 
 ---
 
 ## 8. Requisitos funcionais (resumo)
 
-Documentados em `docks/dock.md` (RF01–RF17+):
+Documentados em [`dock.md`](dock.md) (RF01–RF23):
 
 | RF | Descrição |
 |----|-----------|
@@ -227,4 +223,4 @@ Documentados em `docks/dock.md` (RF01–RF17+):
 | RF17 | Consulta de CEP (ViaCEP) |
 | RF18+ | Mapa interativo (Nominatim/OpenStreetMap) |
 
-> **Nota:** parte desses requisitos está apenas especificada em `docks/dock.md` e ainda não foi implementada no código-fonte atual.
+> **Nota:** parte desses requisitos está apenas especificada em [`dock.md`](dock.md) e ainda não foi implementada no código-fonte atual.
