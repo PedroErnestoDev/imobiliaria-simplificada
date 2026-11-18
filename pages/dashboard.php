@@ -293,16 +293,14 @@ $indisponiveis = count(array_filter(
     </a>
 
     <a href="cadastrar-imovel.php">
-        + Cadastrar Imóvel
+       adicinar novo Imóvel
     </a>
 
     <a href="../public/imoveis.php">
         Ver Catálogo Público
     </a>
 
-    <a href="../public/contato.php">
-        Contato
-    </a>
+
 
     <div class="mt-4 px-3">
 
@@ -335,7 +333,7 @@ $indisponiveis = count(array_filter(
             href="cadastrar-imovel.php"
             class="btn btn-gold px-4 py-2"
         >
-            + Novo Imóvel
+            adicionar  Novo Imóvel
         </a>
 
     </header>

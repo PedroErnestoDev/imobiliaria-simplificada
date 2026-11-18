@@ -2,6 +2,8 @@ FROM php:8.3-apache
 
 # Extensões PHP para MySQL
 RUN docker-php-ext-install pdo pdo_mysql
+RUN printf 'upload_max_filesize=10M\npost_max_size=64M\n' \
+    > /usr/local/etc/php/conf.d/uploads.ini
 RUN mkdir -p /var/www/public/uploads/imoveis \
     && chown -R www-data:www-data /var/www/public/uploads
 

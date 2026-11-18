@@ -530,8 +530,6 @@ function atualizarImovel(PDO $pdo, int $id, array $dados): bool
             telefone_contato = :telefone_contato,
             whatsapp = :whatsapp,
             email_contato = :email_contato,
-            latitude = :latitude,
-            longitude = :longitude,
             status = :status
         WHERE id = :id
     ";
@@ -561,8 +559,6 @@ function atualizarImovel(PDO $pdo, int $id, array $dados): bool
     $stmt->bindValue(':telefone_contato', $dados['telefone_contato'] ?? null);
     $stmt->bindValue(':whatsapp', $dados['whatsapp'] ?? null);
     $stmt->bindValue(':email_contato', $dados['email_contato'] ?? null);
-    $stmt->bindValue(':latitude', $dados['latitude'] ?? null);
-    $stmt->bindValue(':longitude', $dados['longitude'] ?? null);
     $stmt->bindValue(':status', $dados['status'] ?? 'disponivel');
 
     return $stmt->execute();
@@ -576,17 +572,76 @@ function atualizarImovel(PDO $pdo, int $id, array $dados): bool
 
 function excluirImovel(PDO $pdo, int $id): bool
 {
-    $sql = "
-        UPDATE imoveis
-        SET status = 'indisponivel'
-        WHERE id = :id
-    ";
+    $stmtImagens = $pdo->prepare(
+        'SELECT caminho_imagem FROM imagens_imoveis WHERE imovel_id = :id'
+    );
+    $stmtImagens->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmtImagens->execute();
+    $caminhosImagens = $stmtImagens->fetchAll(PDO::FETCH_COLUMN);
 
-    $stmt = $pdo->prepare($sql);
+    $stmt = $pdo->prepare('DELETE FROM imoveis WHERE id = :id');
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+    if (!$stmt->execute() || $stmt->rowCount() === 0) {
+        return false;
+    }
+
+    $diretorioUploads = realpath(dirname(__DIR__, 3) . '/public/uploads/imoveis');
+
+    if ($diretorioUploads === false) {
+        return true;
+    }
+
+    foreach ($caminhosImagens as $caminhoImagem) {
+        if (
+            !is_string($caminhoImagem)
+            || preg_match('~\Auploads/imoveis/([^/\\\\]+)\z~', $caminhoImagem, $partes) !== 1
+        ) {
+            continue;
+        }
+
+        $arquivo = realpath($diretorioUploads . DIRECTORY_SEPARATOR . $partes[1]);
+        $prefixoUploads = $diretorioUploads . DIRECTORY_SEPARATOR;
+
+        if (
+            $arquivo !== false
+            && str_starts_with($arquivo, $prefixoUploads)
+            && is_file($arquivo)
+            && !unlink($arquivo)
+        ) {
+            error_log('[Imoveis] Não foi possível remover a imagem: ' . $arquivo);
+        }
+    }
+
+    return true;
+}
+
+function alterarStatusImovel(PDO $pdo, int $id, string $status): bool
+{
+    if (!in_array($status, ['disponivel', 'indisponivel'], true)) {
+        return false;
+    }
+
+    $stmtAtual = $pdo->prepare('SELECT status FROM imoveis WHERE id = :id');
+    $stmtAtual->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmtAtual->execute();
+    $statusAtual = $stmtAtual->fetchColumn();
+
+    if ($statusAtual === false) {
+        return false;
+    }
+
+    if ($statusAtual === $status) {
+        return true;
+    }
+
+    $stmt = $pdo->prepare('UPDATE imoveis SET status = :status WHERE id = :id');
+    $stmt->bindValue(':status', $status);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
     return $stmt->execute();
 }
+
 
 /*
 |--------------------------------------------------------------------------
@@ -631,6 +686,84 @@ function salvarImagemImovel(
         ':caminho' => $caminho,
         ':principal' => $principal ? 1 : 0
     ]);
+}
+
+function salvarUploadsImagensImovel(PDO $pdo, int $imovelId): int
+{
+    if (
+        !isset($_FILES['imagens']['name']) ||
+        !is_array($_FILES['imagens']['name'])
+    ) {
+        return 0;
+    }
+
+    $uploadDirectory = dirname(__DIR__, 3) . '/public/uploads/imoveis';
+    if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true) && !is_dir($uploadDirectory)) {
+        throw new RuntimeException('Não foi possível criar a pasta de imagens.');
+    }
+
+    $extensionsByMime = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
+    $images = listarImagensImovel($pdo, $imovelId);
+    $principal = $images === [];
+    $savedCount = 0;
+
+    foreach ($_FILES['imagens']['name'] as $index => $name) {
+        $error = $_FILES['imagens']['error'][$index] ?? UPLOAD_ERR_NO_FILE;
+        if ($error === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+        if ($error !== UPLOAD_ERR_OK) {
+            $uploadError = match ($error) {
+                UPLOAD_ERR_INI_SIZE => 'Uma imagem excede o limite de tamanho configurado no servidor.',
+                UPLOAD_ERR_FORM_SIZE => 'Uma imagem excede o limite de tamanho do formulário.',
+                UPLOAD_ERR_PARTIAL => 'Uma imagem foi enviada parcialmente. Tente novamente.',
+                UPLOAD_ERR_NO_TMP_DIR => 'A pasta temporária para uploads não está disponível.',
+                UPLOAD_ERR_CANT_WRITE => 'O servidor não conseguiu gravar a imagem enviada.',
+                UPLOAD_ERR_EXTENSION => 'Uma extensão do PHP interrompeu o envio da imagem.',
+                default => 'O envio de uma das imagens falhou.',
+            };
+            throw new RuntimeException($uploadError);
+        }
+
+        $temporaryPath = $_FILES['imagens']['tmp_name'][$index] ?? '';
+        $fileSize = (int) ($_FILES['imagens']['size'][$index] ?? 0);
+        if ($fileSize <= 0 || $fileSize > 10 * 1024 * 1024) {
+            throw new RuntimeException('Cada imagem deve ter no máximo 10 MB.');
+        }
+
+        $imageInfo = is_string($temporaryPath) ? getimagesize($temporaryPath) : false;
+        $mimeType = is_array($imageInfo) ? ($imageInfo['mime'] ?? '') : '';
+        if (!isset($extensionsByMime[$mimeType])) {
+            throw new RuntimeException('Formato de imagem inválido. Use JPG, PNG ou WebP.');
+        }
+
+        $fileName = bin2hex(random_bytes(16)) . '.' . $extensionsByMime[$mimeType];
+        $destination = $uploadDirectory . '/' . $fileName;
+        if (!move_uploaded_file($temporaryPath, $destination)) {
+            throw new RuntimeException('Não foi possível salvar uma das imagens enviadas.');
+        }
+
+        try {
+            salvarImagemImovel(
+                $pdo,
+                $imovelId,
+                'uploads/imoveis/' . $fileName,
+                $principal
+            );
+        } catch (Throwable $e) {
+            unlink($destination);
+            throw $e;
+        }
+
+        $principal = false;
+        $savedCount++;
+    }
+
+    return $savedCount;
 }
 
 /*

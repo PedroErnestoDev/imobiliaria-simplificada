@@ -30,7 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
     try {
         $id = cadastrarImovel($pdo, $dados, 1);
-        $sucesso = "Imóvel cadastrado com sucesso! ID: $id";
+        try {
+            $contador = salvarUploadsImagensImovel($pdo, $id);
+            $sucesso = "Imóvel cadastrado com sucesso! ID: $id. $contador imagem(ns) adicionada(s).";
+        } catch (Throwable $e) {
+            error_log('Erro ao salvar imagens do imóvel ' . $id . ': ' . $e->getMessage());
+            $erro = "Imóvel cadastrado com ID $id, mas não foi possível salvar as imagens: " . $e->getMessage();
+        }
     } catch (Exception $e) {
         $erro = $e->getMessage();
     }
@@ -64,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="card-body">
                     <?php if ($sucesso): ?><div class="alert alert-success"><?= $sucesso ?></div><?php endif; ?>
                     <?php if ($erro): ?><div class="alert alert-danger"><?= $erro ?></div><?php endif; ?>
-                    <form method="POST" action="">
+                    <form method="POST" action="" enctype="multipart/form-data">
                         <div class="row g-3">
                             <div class="col-md-4"><label class="form-label fw-bold">Código *</label><input type="text" name="codigo" class="form-control" required placeholder="Ex: CASA001"></div>
                             <div class="col-md-4"><label class="form-label fw-bold">Finalidade *</label><select name="finalidade" class="form-select" required><option value="venda">Venda</option><option value="aluguel">Aluguel</option></select></div>
@@ -92,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="col-md-12"><label class="form-label fw-bold">Imagens do Imóvel</label>
                                 <div class="border rounded p-3">
                                     <input class="form-control" type="file" name="imagens[]" multiple accept="image/jpeg,image/png,image/webp">
-                                    <small class="text-muted">Selecione uma ou mais imagens (JPEG, PNG, WebP)</small>
+                                    <small class="text-muted">Selecione uma ou mais imagens (JPEG, PNG ou WebP), com até 10 MB por arquivo.</small>
                                 </div>
                             </div>
                         </div>

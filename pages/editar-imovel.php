@@ -44,17 +44,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
         'telefone_contato' => trim($_POST['telefone_contato'] ?? ''),
         'whatsapp' => trim($_POST['whatsapp'] ?? ''),
         'email_contato' => trim($_POST['email_contato'] ?? ''),
-        'latitude' => $_POST['latitude'] ?? null,
-        'longitude' => $_POST['longitude'] ?? null,
         'status' => $_POST['status'] ?? 'disponivel'
     ];
 
     try {
         atualizarImovel($pdo, $id, $dados);
-        $sucesso = 'Imóvel atualizado com sucesso!';
-        $imovel = array_merge($imovel, $dados);
-    } catch (Exception $e) {
-        $erro = $e->getMessage();
+        $contador = salvarUploadsImagensImovel($pdo, $id);
+        $sucesso = "Imóvel atualizado com sucesso! $contador nova(s) imagem(ns) adicionada(s).";
+        $imovel = buscarImovelCompleto($pdo, $id);
+        $imagens = listarImagensImovel($pdo, $id);
+    } catch (Throwable $e) {
+        $erro = 'Erro ao atualizar imóvel: ' . $e->getMessage();
     }
 }
 ?>
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
                     <?php endif; ?>
 
                     <?php if ($imovel): ?>
-                    <form method="POST" action="">
+                    <form method="POST" action="" enctype="multipart/form-data">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Código *</label>
@@ -133,6 +133,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
                             <div class="col-12">
                                 <label class="form-label fw-bold">Descrição</label>
                                 <textarea name="descricao" class="form-control" rows="3"><?= htmlspecialchars($imovel['descricao'] ?? '') ?></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold" for="imagens">Adicionar imagens</label>
+                                <input
+                                    type="file"
+                                    name="imagens[]"
+                                    id="imagens"
+                                    class="form-control"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    multiple
+                                >
+                                <div class="form-text">JPG, PNG ou WebP; até 10 MB por imagem. A primeira imagem será a principal caso ainda não haja uma cadastrada.</div>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-bold">CEP</label>
@@ -199,14 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
                                 <input type="email" name="email_contato" class="form-control" value="<?= htmlspecialchars($imovel['email_contato'] ?? '') ?>">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Latitude</label>
-                                <input type="text" name="latitude" class="form-control" value="<?= htmlspecialchars($imovel['latitude'] ?? '') ?>">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Longitude</label>
-                                <input type="text" name="longitude" class="form-control" value="<?= htmlspecialchars($imovel['longitude'] ?? '') ?>">
-                            </div>
-                            <div class="col-md-4">
                                 <label class="form-label fw-bold">Status</label>
                                 <select name="status" class="form-select">
                                     <option value="disponivel" <?= $imovel['status'] === 'disponivel' ? 'selected' : '' ?>>Disponível</option>
@@ -231,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
                             <?php foreach ($imagens as $img): ?>
                                 <div class="col-md-4">
                                     <div class="card border-0">
-                                        <img src="assets/casa.jpg" class="card-img-top" alt="Imagem" style="max-height: 200px; object-fit: cover;">
+                                        <img src="/uploads/imoveis/<?= rawurlencode(basename((string) $img['caminho_imagem'])) ?>" class="card-img-top" alt="Imagem do imóvel" style="max-height: 200px; object-fit: cover;">
                                         <div class="card-body small text-center">
                                             <span class="badge bg-<?= $img['imagem_principal'] ? 'success' : 'secondary' ?>">
                                                 <?= $img['imagem_principal'] ? 'Principal' : 'Secundária' ?>

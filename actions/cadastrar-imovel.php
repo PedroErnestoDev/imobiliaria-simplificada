@@ -36,6 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'status' => $_POST['status'] ?? 'disponivel'
     ];
 
+    $id = null;
+
     try {
         $id = cadastrarImovel($pdo, $dados, 1);
         error_log("Imóvel cadastrado ID: $id");
@@ -44,14 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Upload de imagens
-    if (isset($_FILES['imagens']) && is_array($_FILES['imagens']['name'])) {
+    if ($id !== null && isset($_FILES['imagens']) && is_array($_FILES['imagens']['name'])) {
         error_log("Processing images count: " . count($_FILES['imagens']['name']));
         $contador = count($_FILES['imagens']['name']);
         for ($i = 0; $i < $contador; $i++) {
             error_log("Processing image $i: error={$_FILES['imagens']['error'][$i]}, name={$_FILES['imagens']['name'][$i]}");
             if ($_FILES['imagens']['error'][$i] === UPLOAD_ERR_OK) {
                 $ext = strtolower(pathinfo($_FILES['imagens']['name'][$i], PATHINFO_EXTENSION));
-                $novoNome = 'img_' . $id . '_' . time() . '_' . $i . '.' . $ext;
+                $novoNome = "img_{$id}_" . time() . '_' . $i . '.' . $ext;
                 // Caminho ABSOLUTO no container Docker
                 $diretorio = '/var/www/public/uploads/imoveis/';
                 

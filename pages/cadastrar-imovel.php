@@ -42,8 +42,6 @@ $dados = [
     'telefone_contato' => '',
     'whatsapp' => '',
     'email_contato' => '',
-    'latitude' => '',
-    'longitude' => '',
     'status' => 'disponivel'
 ];
 
@@ -176,35 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new InvalidArgumentException(
                 'O valor do imóvel deve ser maior que zero.'
             );
-        }
-
-        // Validação das coordenadas geográficas.
-        foreach (['latitude', 'longitude'] as $campo) {
-            if ($dados[$campo] !== '' && !is_numeric($dados[$campo])) {
-                throw new InvalidArgumentException(
-                    "Coordenada {$campo} inválida."
-                );
-            }
-
-            if ($dados[$campo] !== '') {
-                $dados[$campo] = (float) $dados[$campo];
-            } else {
-                $dados[$campo] = null;
-            }
-        }
-
-        if (
-            $dados['latitude'] !== null &&
-            ($dados['latitude'] < -90 || $dados['latitude'] > 90)
-        ) {
-            throw new InvalidArgumentException('Latitude fora do intervalo permitido.');
-        }
-
-        if (
-            $dados['longitude'] !== null &&
-            ($dados['longitude'] < -180 || $dados['longitude'] > 180)
-        ) {
-            throw new InvalidArgumentException('Longitude fora do intervalo permitido.');
         }
 
         // IMPORTANTE:
@@ -604,36 +573,9 @@ if (isset($_SESSION['mensagem_sucesso'])) {
 
                         </div>
 
-                        <h6 class="section-title">Geolocalização e publicação</h6>
+                        <h6 class="section-title">Publicação</h6>
 
                         <div class="row g-3">
-
-                            <div class="col-md-4">
-                                <label class="form-label">Latitude</label>
-                                <input
-                                    type="number"
-                                    name="latitude"
-                                    class="form-control"
-                                    step="any"
-                                    min="-90"
-                                    max="90"
-                                    value="<?= escapar($dados['latitude']) ?>"
-                                >
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label">Longitude</label>
-                                <input
-                                    type="number"
-                                    name="longitude"
-                                    class="form-control"
-                                    step="any"
-                                    min="-180"
-                                    max="180"
-                                    value="<?= escapar($dados['longitude']) ?>"
-                                >
-                            </div>
-
                             <div class="col-md-4">
                                 <label class="form-label">Status</label>
                                 <select name="status" class="form-select">
