@@ -5,7 +5,7 @@
 
 O sistema tem como objetivo gerenciar imóveis disponíveis para venda e aluguel, permitindo o cadastro, a consulta, a edição e a exclusão de imóveis. Também deverá disponibilizar filtros de pesquisa para facilitar a localização de imóveis conforme as necessidades dos usuários, além de apresentar sua localização em um mapa interativo.
 
-O sistema também deverá oferecer autenticação de usuários e controle de acesso às funcionalidades administrativas, incluindo autenticação em dois fatores.
+O sistema também deverá oferecer autenticação de usuários e controle de acesso às funcionalidades administrativas, garantindo que somente usuários autenticados e autorizados possam realizar operações administrativas.
 
 ### 2. Requisitos funcionais
 
@@ -108,19 +108,11 @@ O sistema deverá integrar ViaCEP, Nominatim e OpenLayers, permitindo que a cons
 
 O sistema deverá permitir que usuários cadastrados realizem login por meio de e-mail e senha para acessar as funcionalidades administrativas.
 
-**RF22 — Autenticação em dois fatores (2FA)**
-
-Após a validação das credenciais, o sistema deverá solicitar uma segunda etapa de autenticação por meio de um código temporário gerado por aplicativo autenticador, seguindo o padrão TOTP.
-
-**RF23 — Configuração do segundo fator**
-
-O sistema deverá permitir configurar o segundo fator de autenticação, vinculando a conta do usuário a um aplicativo autenticador por meio de uma chave de configuração e um QR Code.
-
-**RF24 — Encerramento de sessão**
+**RF22 — Encerramento de sessão**
 
 O sistema deverá permitir que o usuário autenticado encerre sua sessão por meio da funcionalidade de logout.
 
-**RF25 — Controle de acesso às funcionalidades administrativas**
+**RF23 — Controle de acesso às funcionalidades administrativas**
 
 O sistema deverá restringir o acesso às funcionalidades administrativas a usuários autenticados e autorizados, impedindo o acesso direto por usuários sem as permissões necessárias.
 
@@ -139,8 +131,7 @@ O sistema deverá restringir o acesso às funcionalidades administrativas a usu�
 - **RN11:** Caso o Nominatim não encontre a localização, o sistema deverá informar que não foi possível identificar o endereço no mapa, sem impedir o cadastro do imóvel.
 - **RN12:** As coordenadas geográficas deverão ser obtidas automaticamente, sem preenchimento manual pelo usuário. Caso não sejam encontradas, poderão permanecer sem preenchimento.
 - **RN13:** Somente usuários autenticados e autorizados poderão acessar as funcionalidades administrativas.
-- **RN14:** O acesso administrativo somente deverá ser liberado após a validação da senha e do segundo fator de autenticação.
-- **RN15:** Os códigos TOTP deverão ser temporários e não poderão ser reutilizados após a validação.
+- **RN14:** O acesso administrativo deverá ser liberado após a validação das credenciais do usuário.
 
 ### 4. Operações principais do sistema
 
@@ -220,25 +211,25 @@ Usuário informa o CEP
         |
         v
 Preenchimento automático
-     do endereço
+    do endereço
         |
         v
     Nominatim
         |
         v
 Retorno da latitude
-   e longitude
+  e longitude
         |
         v
    OpenLayers
         |
         v
 Exibição do imóvel
-     no mapa
+    no mapa
         |
         v
 Armazenamento no banco
-      de dados
+     de dados
 ```
 
 **Observação técnica:** o ViaCEP e o Nominatim são serviços externos de consulta. Já o OpenLayers é uma biblioteca JavaScript utilizada na aplicação para exibir e manipular mapas. A exibição do mapa também depende de uma fonte de imagens cartográficas (tiles), como os tiles do OpenStreetMap, respeitando suas condições de uso e atribuição.
@@ -247,7 +238,7 @@ Caso o Nominatim não encontre o endereço, o sistema deverá informar o usuári
 
 ### 7. Critérios de conclusão
 
-O sistema será considerado funcional quando permitir realizar todas as operações CRUD, aplicar corretamente os filtros de pesquisa, validar os dados cadastrados, controlar a disponibilidade dos imóveis, autenticar usuários com dois fatores e integrar os serviços de localização para apresentar os imóveis em um mapa interativo.
+O sistema será considerado funcional quando permitir realizar todas as operações CRUD, aplicar corretamente os filtros de pesquisa, validar os dados cadastrados, controlar a disponibilidade dos imóveis, autenticar usuários por meio de e-mail e senha e integrar os serviços de localização para apresentar os imóveis em um mapa interativo.
 
 ### 8. Observações finais
 
@@ -255,8 +246,7 @@ Esta documentação contempla os requisitos funcionais e as regras de negócio d
 
 Os requisitos não funcionais, a estrutura do projeto, o modelo do banco de dados, os diagramas UML e os detalhes de implementação serão documentados separadamente, complementando a especificação do projeto.
 
-
-
+---
 
 # Estrutura do Projeto
 ## Sistema de Gerenciamento Imobiliário — CRUD
@@ -280,6 +270,8 @@ imobiliaria-simplificada/
 ├── docks/
 │   └── Diagrama banco de dados.drawio.svg
 │
+├── docs/
+│
 ├── includes/
 │   ├── header.php
 │   └── footer.php
@@ -290,8 +282,7 @@ imobiliaria-simplificada/
 │   ├── cadastrar-imovel.php
 │   ├── editar-imovel.php
 │   ├── visualizar-imovel.php
-│   ├── login.php
-│   └── verificar-2fa.php
+│   └── login.php
 │
 ├── api/
 │   ├── viacep.php
@@ -302,8 +293,6 @@ imobiliaria-simplificada/
 │   ├── editar-imovel.php
 │   ├── excluir-imovel.php
 │   ├── autenticar.php
-│   ├── configurar-2fa.php
-│   ├── verificar-2fa.php
 │   └── logout.php
 │
 ├── storage/
@@ -336,21 +325,25 @@ Contém os arquivos SQL responsáveis pela criação e inicialização do banco 
 
 Armazena diagramas e documentos visuais utilizados na modelagem e documentação do projeto.
 
+**docs/**
+
+Armazena a documentação completa do projeto, incluindo guias de instalação, informações de segurança e histórico de alterações (changelog).
+
 **includes/**
 
 Contém componentes reutilizáveis da interface, como cabeçalho e rodapé.
 
 **pages/**
 
-Armazena as páginas responsáveis pela apresentação das funcionalidades do sistema, incluindo cadastro, listagem, edição, visualização de imóveis e autenticação.
+Armazena as páginas responsáveis pela apresentação das funcionalidades do sistema, incluindo cadastro, listagem, edição, visualização de imóveis e autenticação de usuários.
 
 **api/**
 
-Contém os arquivos responsáveis pelas integrações com serviços externos, como ViaCEP e Nominatim.
+Contém os arquivos responsáveis pelas integrações com serviços externos, como ViaCEP e Nominatim/OpenStreetMap.
 
 **actions/**
 
-Armazena os arquivos responsáveis pelo processamento das operações do sistema, incluindo operações CRUD e autenticação.
+Armazena os arquivos responsáveis pelo processamento das operações do sistema, incluindo operações CRUD e autenticação de usuários.
 
 **storage/**
 
@@ -366,7 +359,7 @@ O projeto utilizará uma organização modular, separando a apresentação das p
 
 A aplicação não utilizará o padrão MVC. A separação de responsabilidades será realizada por meio da organização dos diretórios e arquivos.
 
-O arquivo `public/index.php` será o ponto de entrada da aplicação, responsável por direcionar as requisições para as páginas e operações correspondentes.
+O arquivo `public/index.php` será o ponto de entrada do sistema, responsável por direcionar as requisições para as páginas e operações correspondentes.
 
 ### 5. Observações técnicas
 

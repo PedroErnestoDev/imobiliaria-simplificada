@@ -1,6 +1,6 @@
 # Imobiliária Simplificada
 
-Sistema de gerenciamento imobiliário para cadastro, consulta, edição e exclusão de imóveis disponíveis para venda e aluguel, com autenticação de usuários, controle de acesso (2FA), filtros de pesquisa e localização em mapa interativo.
+Sistema de gerenciamento imobiliário para cadastro, consulta, edição e exclusão de imóveis disponíveis para venda e aluguel, com filtros de pesquisa e localização em mapa interativo.
 
 ## 📋 Visão geral
 
@@ -9,8 +9,9 @@ A **DW2 Imobiliária** conecta pessoas a oportunidades imobiliárias. O sistema 
 - Consulta pública de imóveis com filtros (finalidade, tipo, localização, quartos, faixa de preço)
 - Cadastro, edição, exclusão e controle de disponibilidade de imóveis
 - Gerenciamento de imagens por imóvel
-- Autenticação de corretores e administradores com verificação em duas etapas (2FA/TOTP)
 - Consulta de endereço por CEP (ViaCEP) e geolocalização (Nominatim/OpenStreetMap)
+
+> ⚠️ O módulo de autenticação (login, cadastro de usuários, controle de acesso) está especificado em `docks/dock.md`, mas **ainda não está implementado** no código-fonte atual.
 
 ## 🛠️ Stack tecnológica
 
@@ -78,25 +79,37 @@ imobiliaria-simplificada/
 
 Todos os diagramas estão na pasta `docks/`. As fontes editáveis estão em `.puml` (PlantUML) e as renderizações em `.svg`.
 
-| Diagrama | Arquivo fonte | Visualização |
+| Diagramas | Arquivo fonte | Visualização |
 |----------|--------------|--------------|
-| Banco de dados (ER) | `Diagrama banco de dados.drawio.svg` | `docks/` |
-| Casos de uso | `caso_de _uso.drawio.svg` | `docks/` |
+| Banco de dados (ER) | `Diagrama banco de dados.drawio.svg` / `diagrama_banco_dados.puml` | `docks/` |
+| Casos de uso | `caso_de_uso.drawio.svg` / `diagrama_casos_uso.puml` | `docks/` |
 | Fluxo de autenticação | `Fluxo de autenticação.drawio.svg` | `docks/` |
 | Atividades — Visão geral | `Diagrama de atividades — Visão geral.drawio.svg` | `docks/` |
 | Sequência — Cadastro de imóvel | `diagrama_sequencia_cadastro_imovel.puml` | `.svg` |
-| Sequência — Login com 2FA | `diagrama_sequencia_login_2fa.puml` | `.svg` |
 | Sequência — Consulta de imóveis | `diagrama_sequencia_consulta_imovel.puml` | `.svg` |
+| Sequência — Login | `diagrama_sequencia_login.puml` | `.svg` |
 | Componentes | `diagrama_componentes.puml` | `.svg` |
 | Implantação (Docker) | `diagrama_implantacao_docker.puml` | `.svg` |
-| Classes de domínio | `diagrama_classes_dominio.puml` | `.svg` |
-| Estado do imóvel | `diagrama_estado_imovel.puml` | `.svg` |
+| Classes de domínio | `diagrama_classes_dominio.svg` | `.svg` |
+| Estado do imóvel | `diagrama_estado_imovel.svg` | `.svg` |
 
 ### Como editar os diagramas
 - Abra os arquivos `.puml` no [PlantUML Online Server](https://www.plantuml.com/plantuml/) ou em qualquer editor com suporte a PlantUML (VS Code, IntelliJ, etc.).
 - Os arquivos `.svg` existentes são do [draw.io](https://app.diagrams.net/) e podem ser editados arrastando o arquivo para o editor.
 
-## 📖 Documentação relacionada
+## 📚 Documentação completa
+
+Toda a documentação do projeto está na pasta `docs/`:
+
+| Documento | Descrição |
+|-----------|-----------|
+| [`GUIA_USUARIO.md`](docs/GUIA_USUARIO.md) | Guia para uso do sistema (consulta, filtros, cadastro de imóveis) |
+| [`GUIA_DESENVOLVEDOR.md`](docs/GUIA_DESENVOLVEDOR.md) | Arquitetura, stack, estrutura, banco de dados e como contribuir |
+| [`INSTALACAO.md`](docs/INSTALACAO.md) | Instalação, implantação e configuração em desenvolvimento/produção |
+| [`SEGURANCA.md`](docs/SEGURANCA.md) | Práticas e recomendações de segurança |
+| [`CHANGELOG.md`](docs/CHANGELOG.md) | Histórico de mudanças por versão |
+
+## 📖 Documentação relacionada (docks/)
 
 - [`docks/dock.md`](docks/dock.md) — Requisitos funcionais (RF01–RF17+) e estrutura do projeto
 - [`docks/dicionario_dados.md`](docks/dicionario_dados.md) — Dicionário de dados do banco de dados
