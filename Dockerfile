@@ -2,6 +2,8 @@ FROM php:8.3-apache
 
 # Extensões PHP para MySQL
 RUN docker-php-ext-install pdo pdo_mysql
+RUN mkdir -p /var/www/public/uploads/imoveis \
+    && chown -R www-data:www-data /var/www/public/uploads
 
 # Ativar mod_rewrite
 RUN a2enmod rewrite

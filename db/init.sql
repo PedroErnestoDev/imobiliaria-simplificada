@@ -14,4 +14,9 @@ CREATE TABLE IF NOT EXISTS usuarios (
     ativo TINYINT(1) NOT NULL DEFAULT 1,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+
+-- Usuário admin padrão (senha: admin123456)
+INSERT IGNORE INTO usuarios (nome, email, senha_hash, tipo, ativo) VALUES
+('Administrador', 'admin@imobiliaria.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1);
 ) ENGINE=InnoDB;

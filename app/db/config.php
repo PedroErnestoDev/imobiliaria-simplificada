@@ -41,7 +41,6 @@ final class Database
             );
 
             return $this->connection;
-
         } catch (PDOException $e) {
             error_log('[Database] ' . $e->getMessage());
 
@@ -53,6 +52,3 @@ final class Database
         }
     }
 }
-
-$database = new Database();
-$pdo = $database->connect();
