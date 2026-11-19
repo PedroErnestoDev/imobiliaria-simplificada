@@ -176,9 +176,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
         }
 
-        // IMPORTANTE:
-        // Substituir pela identificação real do usuário autenticado.
-        // Não utilizar um ID fixo em produção.
         if (empty($_SESSION['usuario']['id'])) {
             throw new RuntimeException(
                 'Usuário não autenticado. Faça login para cadastrar imóveis.'

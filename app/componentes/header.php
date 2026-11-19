@@ -1,4 +1,8 @@
-
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,11 +146,26 @@
                         </a>
                     </li>
 
-                    <li class="nav-item ms-lg-3">
-                        <a href="login.php" class="btn btn-gold">
-                            Entrar
-                        </a>
-                    </li>
+                    <?php
+                    $logado = isset($_SESSION['usuario_id']);
+                    ?>
+
+                    <?php if ($logado): ?>
+                        <li class="nav-item ms-lg-3 d-flex align-items-center">
+                            <span class="nav-link text-white-50 me-2">
+                                Olá, <?= htmlspecialchars($_SESSION['usuario_nome'] ?? 'Usuário') ?>
+                            </span>
+                            <a href="/actions/logout.php" class="btn btn-gold btn-sm">
+                                Sair
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item ms-lg-3">
+                            <a href="login.php" class="btn btn-gold">
+                                Entrar
+                            </a>
+                        </li>
+                    <?php endif; ?>
 
                 </ul>
             </div>

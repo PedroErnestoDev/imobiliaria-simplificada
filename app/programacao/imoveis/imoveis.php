@@ -790,3 +790,39 @@ function listarImagensImovel(PDO $pdo, int $imovelId): array
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+/*
+|--------------------------------------------------------------------------
+| EXCLUIR IMAGEM DO IMÓVEL
+|--------------------------------------------------------------------------
+*/
+
+function excluirImagemImovel(PDO $pdo, int $imagemId): bool
+{
+    // Buscar caminho da imagem antes de excluir
+    $stmt = $pdo->prepare(
+        'SELECT caminho_imagem FROM imagens_imoveis WHERE id = :id LIMIT 1'
+    );
+    $stmt->bindValue(':id', $imagemId, PDO::PARAM_INT);
+    $stmt->execute();
+    $imagem = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($imagem === false) {
+        return false;
+    }
+
+    // Excluir do banco de dados
+    $stmtDelete = $pdo->prepare(
+        'DELETE FROM imagens_imoveis WHERE id = :id'
+    );
+    $stmtDelete->bindValue(':id', $imagemId, PDO::PARAM_INT);
+    $stmtDelete->execute();
+
+    // Remover arquivo físico se existir
+    $caminhoArquivo = __DIR__ . '/../../../../public/' . $imagem['caminho_imagem'];
+    if (is_file($caminhoArquivo)) {
+        unlink($caminhoArquivo);
+    }
+
+    return true;
+}

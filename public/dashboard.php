@@ -1,5 +1,16 @@
 <?php
 require_once __DIR__ . '/../app/programacao/imoveis/imoveis.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+// Proteção: exige autenticação
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 $tipo = trim($_GET['tipo'] ?? '');
 $finalidade = trim($_GET['finalidade'] ?? '');
 $status = trim($_GET['status'] ?? '');

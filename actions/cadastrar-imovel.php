@@ -1,6 +1,16 @@
 <?php
 require_once __DIR__ . '/../app/programacao/imoveis/imoveis.php';
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+// Proteção: exige autenticação
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: /login.php');
+    exit;
+}
+
 $sucesso = '';
 $erro = '';
 
@@ -39,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = null;
 
     try {
-        $id = cadastrarImovel($pdo, $dados, 1);
+        $id = cadastrarImovel($pdo, $dados, (int) $_SESSION['usuario_id']);
         error_log("Imóvel cadastrado ID: $id");
     } catch (Exception $e) {
         $erro = "Erro ao cadastrar: " . $e->getMessage();
@@ -94,5 +104,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sucesso = "Imóvel cadastrado com sucesso! ID: $id";
 }
 
-header('Location: ../pages/dashboard.php?status=cadastrado');
+header('Location: /dashboard.php?status=cadastrado');
 exit;

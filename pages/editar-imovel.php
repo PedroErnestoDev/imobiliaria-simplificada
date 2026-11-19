@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
                                             <span class="badge bg-<?= $img['imagem_principal'] ? 'success' : 'secondary' ?>">
                                                 <?= $img['imagem_principal'] ? 'Principal' : 'Secundária' ?>
                                             </span><br>
-                                            <a href="#" class="btn btn-sm btn-danger text-white">Excluir</a>
+                                            <button type="button" class="btn btn-sm btn-danger text-white" data-imagem-id="<?= (int) $img['id'] ?>" onclick="excluirImagem(<?= (int) $img['id'] ?>)">Excluir</button>
                                         </div>
                                     </div>
                                 </div>
@@ -256,5 +256,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $imovel) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function excluirImagem(imagemId) {
+        if (!confirm('Tem certeza que deseja excluir esta imagem? Esta ação não pode ser desfeita.')) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('imagem_id', imagemId);
+
+        fetch('/actions/excluir-imagem-imovel.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.sucesso) {
+                location.reload();
+            } else {
+                alert(data.mensagem || 'Erro ao excluir a imagem.');
+            }
+        })
+        .catch(() => {
+            alert('Erro ao comunicar com o servidor.');
+        });
+    }
+</script>
 </body>
 </html>
