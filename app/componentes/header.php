@@ -67,7 +67,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="index.php">
-            <img src="assets/logo.png" alt="DW2 Imobiliaria">
+            <img src="assets/logo.png" alt="DW2 Imobiliária">
         </a>
 
         <button class="navbar-toggler" type="button"
@@ -91,11 +91,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
                     <li class="nav-item">
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>"
-                           href="index.php">Inicio</a>
+                           href="index.php">Início</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'imoveis.php' ? 'active' : '' ?>"
-                           href="imoveis.php">Imoveis</a>
+                           href="imoveis.php">Imóveis</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'quem_somos.php' ? 'active' : '' ?>"
