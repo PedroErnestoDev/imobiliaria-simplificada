@@ -8,6 +8,7 @@ services:
       - ./app:/var/www/app
       - ./public:/var/www/public
       - ./pages:/var/www/pages
+      - ./api:/var/www/api
       - uploads_data:/var/www/public/uploads
       - ./actions:/var/www/actions
     depends_on:

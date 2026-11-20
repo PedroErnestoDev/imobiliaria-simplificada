@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
---- __E-mail:__ `admin@imobiliaria.com`  __Senha:__ `admin123456`
+--- __E-mail: admin@imobiliaria.com  Senha: admin123456
 
 INSERT IGNORE INTO usuarios (nome, email, senha_hash, papel, ativo) VALUES
 ('Administrador', 'admin@imobiliaria.com', '$2y$12$ct9iqhrvH/l7EclefIekPOCjT7seFrLFBssZZIBNY2TaiyRu3yRSy', 'admin', 1);

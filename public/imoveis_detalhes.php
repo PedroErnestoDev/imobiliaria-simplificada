@@ -1,5 +1,10 @@
 <?php
 
+// Session must start BEFORE ANY HTML output
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../app/programacao/imoveis/imoveis.php'; // Ajuste o caminho se necessário para sua conexão/funções
 
 function escapar($valor): string
@@ -17,6 +22,24 @@ if (!$id) {
 
 // Busca o registro específico no banco
 $imovel = buscarImovelPorId($pdo, $id);
+
+// Buscar todas as imagens do imóvel para a galeria
+$stmtImgs = $pdo->prepare("
+    SELECT id, caminho_imagem, imagem_principal 
+    FROM imagens_imoveis 
+    WHERE imovel_id = :id 
+    ORDER BY imagem_principal DESC, id ASC
+");
+$stmtImgs->bindValue(':id', $id, PDO::PARAM_INT);
+$stmtImgs->execute();
+$imagens = $stmtImgs->fetchAll(PDO::FETCH_ASSOC);
+
+// Proteção: exige autenticação
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +54,8 @@ $imovel = buscarImovelPorId($pdo, $id);
     <meta name="description" content="<?= isset($imovelNaoEncontrado) ? 'Imóvel indisponível.' : escapar(substr(strip_tags($imovel['descricao'] ?? ''), 0, 150)) ?>">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -210,8 +235,6 @@ $imovel = buscarImovelPorId($pdo, $id);
 
 <body>
 
-    <?php require_once __DIR__ . '/../app/componentes/header.php'; ?>
-
     <main class="py-4 mb-5">
         <div class="container">
 
@@ -259,6 +282,25 @@ $imovel = buscarImovelPorId($pdo, $id);
                                 <?= $imovel['finalidade'] === 'venda' ? 'À venda' : 'Para alugar' ?>
                             </span>
                         </div>
+
+                        <!-- Galeria de miniaturas -->
+                        <?php if (!empty($imagens)): ?>
+                            <div class="row g-2 mt-3">
+                                <div class="col-12">
+                                    <div class="thumbnail-gallery d-flex flex-wrap gap-2">
+                                        <?php foreach ($imagens as $idx => $img): ?>
+                                            <img
+                                                src="<?= escapar($img['caminho_imagem']) ?>"
+                                                alt="<?= escapar($imovel['titulo']) ?> - Imagem <?= $idx + 1 ?>"
+                                                class="thumbnail-img"
+                                                style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; border: <?= $img['imagem_principal'] ? '2px solid #c99a3b' : '2px solid transparent'; ?>;"
+                                                onclick="document.querySelector('.property-gallery img').src = this.src;"
+                                            >
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
 
                         <!-- Card de Informações Principais -->
                         <div class="details-card">
@@ -353,9 +395,46 @@ $imovel = buscarImovelPorId($pdo, $id);
         </div>
     </main>
 
-    <?php require_once __DIR__ . '/../app/componentes/footer.php'; ?>
+   
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Mapa de Localização -->
+<div class="mt-5">
+    <h4 >Localização do Imóvel</h4>
+    <div id="mapa-detalhes" style="height: 300px; width: 100%; border-radius: 8px; overflow: hidden; position: relative;"></div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Coordenadas do imóvel (serão preenchidas pelo PHP)
+        var lat = <?= isset($imovel["latitude"]) ? (float)$imovel["latitude"] : -23.550520; ?>;
+        var lng = <?= isset($imovel["longitude"]) ? (float)$imovel["longitude"] : -46.633309; ?>;
+        
+        var map = L.map("mapa-detalhes").setView([lat, lng], 16);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 18
+        }).addTo(map);
+        
+        var marker = L.marker([lat, lng]).addTo(map);
+        
+        // Se tiver endereço, tentar fazer reverse geocode
+        var endereco = "<?= isset($imovel["endereco"]) ? addslashes($imovel["endereco"]) : "" ?>";
+        if (endereco) {
+            fetch("/api/geocoding.php?q=" + encodeURIComponent(endereco) + "&limit=1")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso && data.dados && data.dados.length > 0) {
+                        var loc = data.dados[0];
+                        marker.setLatLng([loc.latitude, loc.longitude]);
+                        map.setView([loc.latitude, loc.longitude], 16);
+                    }
+                })
+                .catch(() => {});
+        }
+    });
+</script>
+ <?php require_once __DIR__ . '/../app/componentes/footer.php'; ?>
 
 </body>
 </html>

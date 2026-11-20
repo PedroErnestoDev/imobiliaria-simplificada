@@ -181,9 +181,16 @@ function contarImoveis(PDO $pdo, array $filtros = []): int
 function buscarImovelPorId(PDO $pdo, int $id): ?array
 {
     $sql = "
-        SELECT *
-        FROM imoveis
-        WHERE id = :id
+        SELECT i.*,
+        (
+            SELECT img.caminho_imagem
+            FROM imagens_imoveis img
+            WHERE img.imovel_id = i.id
+            ORDER BY img.imagem_principal DESC, img.id ASC
+            LIMIT 1
+        ) AS imagem
+        FROM imoveis i
+        WHERE i.id = :id
         LIMIT 1
     ";
 
@@ -400,6 +407,16 @@ function cadastrarImovel(
     array $dados,
     ?int $usuarioId = null
 ): int {
+    // Normalizar código: remover espaços e converter para maiúsculo
+    $codigo = trim($dados["codigo"] ?? "");
+    $codigo = strtoupper(preg_replace("/\s+/", "", $codigo));
+    // Verificar se código já existe
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM imoveis WHERE codigo = :codigo");
+    $stmt->bindValue(":codigo", $codigo);
+    $stmt->execute();
+    if ($stmt->fetchColumn() > 0) {
+        throw new Exception("Já existe um imóvel com este código: " . $codigo);
+    }
     $sql = "
         INSERT INTO imoveis (
             codigo,
